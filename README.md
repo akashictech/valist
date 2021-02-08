@@ -4,11 +4,11 @@
 
 A software/firmware/binary data notary system, similar to the concept that Apple uses to digitally sign and secure applications, but open to developers to extend and integrate into almost any system, traditional or decentralized.
 
-## Overview
+## Our Mission
 
-We are building a secure, trustless software distribution system for both traditional and decentralized infrastructures. No need for expensive and centralized PKIs or manual code signing processes!
+Valist seeks to create a secure, trustless software distribution system for both traditional and decentralized infrastructures. With valist there is no need for expensive and centralized PKIs or manual code signing processes!
 
-We support the following package types with our API natively, with many more in the pipeline:
+The Valist API supports the following package types natively, with many more in the pipeline:
 
 * Any arbitrary binaries (software, firmware, you name it)
 
@@ -18,55 +18,81 @@ We support the following package types with our API natively, with many more in 
 
 * Docker images
 
-The goal is to point **any** software distribution system at a Valist relay, which will ensure the integrity of the packages and act as a universal cache.
+The ultimate goal is to be able to point **any** software distribution system at a Valist relay, which will ensure the integrity of the packages and act as a universal cache.
 
-You can think of it as a trustless Bintray, or a universal Verdaccio, but with far more powerful access control and data integrity features. This includes multi-factor releases (M of N keys need to sign on some firmware before release), as well as the ability to use any hardware wallet to sign code.
+You can think of it as a trustless **Bintray**, or a universal **Verdaccio**, but with far more powerful `access control` and `data integrity` features.
 
-## Motivation
+This includes key features such as **multi-factor releases** where M of N keys are needed to sign off on some firmware before release, as well as the ability to use any hardware wallet to sign code.
 
-Secure (and simplified) software updating is a common problem within IoT, traditional systems, and many cases now, dApps. Typically, it is necessary to roll your own upgrading solution, or be stuck with a centralized app store acceptance and delivery process. The former is ineffective, as constant re-implementation of a process that should be as secure as possible dramatically increases risk, while the latter is ineffective since you are tied to a central entity that manages your distribution on your behalf (i.e., requires permission).
+## Setting up a Valist Relay from Source
 
-The idea is to leverage Ethereum, IPFS and/or Filecoin to create a public "base" layer for a simplified binary repository that both integrates with traditional systems and is built upon decentralized protocols. Smart contracts on Ethereum manage the latest source of truth for binary data stored in another layer such as IPFS and/or Filecoin. Clients can then query the software notary for the latest version of some software and be pointed to a verifiable, decentralized store.
+1. Clone the valist repository ` git clone https://github.com/valist-io/valist.git`
 
-Imagine the following scenario:
+2. Inside the `Relay` folder create a new `.env` containing a `WEB_PROVIDER` for matic:
 
-* A developer wants to distribute a new firmware version for a hardware wallet (or some other arbitrary software) they have been building in a secure, verifiable way.
+    ```
+    WEB3_PROVIDER=https://rpc-mumbai.matic.today
+    ```
 
-* Using a simple frontend, the developer registers their credentials (one or more public keys, perhaps leveraging ERC-725) to the software notary dApp. This can also be organization-level credentials, with individual developer/team access control.
+3. Run `make install`
 
-* The developer then signs the firmware with a private key associated with the public identity.
+4. Run `make run`
 
-* The developer uploads the firmware to the binary store (IPFS/Filecoin) using the simple frontend, and can set any relevant metadata such as version number, update notes, etc.
+5. Considering using a tool such as `pm2` for process management and additional infrastructure logging.
 
-* The registry (on Ethereum, and potentially other blockchains in the future) is updated with the latest verified version.
+## Using the Valist API
 
-* Clients with the software installed automatically detect the change and proceed to notify and/or trigger an auto-update.
+Using the Valist API you can easily query your software/firmware distributions through a convenient web2 rest API. By default a valist relay has a dedicated API route at `/api`.
 
-Here's a visual of what this flow looks like:
+### Getting the Latest Project Release (GET)
 
-![Signed Software Release Flow](docs/img/signed-release-flow.png)
+Fetches the latest release for a project.
 
-The primary goal for this software is to integrate with both traditional (centralized) and decentralized systems. Enterprises would benefit significantly from flexible notary systems just as much as future technologies.
+```
+/api/<OrgName>/<ProjectName>/latest
+```
 
-As for the open source community, the ability to securely host code in a decentralized way is essential. While it is possible to spin up say, a Debian mirror, it might not be as approachable or commonplace, and places the onus of security and maintenance on the contributor. A system like this could make it easy as possible for a contributor to simply "check a box" next to their favorite app/dApp and help bear the load, without having to worry as much about security or configuration.
+```
+https://app.valist.io/api/valist/valist/latest
+```
 
-This is also a major use-case that could help folks see the tangible value of blockchain/decentralized protocols outside of monetary applications, as it can increase security in many existing systems.
+### Getting a Project Release by Version (GET)
 
-One of the main challenges with this project is providing different clients that require various levels of integrity checking. For example, one should be able to use cURL to fetch this data. This should serve most people's needs while adding lots of ancillary benefits. Common public mirrors can operate in the same fashion as many current systems, and users and enterprises will have the freedom to self-host and contribute storage to the public network, or create their own internal or private notaries.
+Fetches the targe release for a project by tag.
 
-### Architecture Overview
+```
+/api/<OrgName>/<ProjectName>/<TAG>
+```
 
-To start, we are providing a simple web frontend and HTTP relay that can be deployed locally or on a server, and a shared library that will be used in a future CLI (and other clients). The intent is to be CI/CD friendly in the future, enabling automatic publishing of cryptographically verifiable software.
+```
+https://app.valist.io/api/valist/valist/0.0.1
+```
 
-![Architecture](docs/img/architecture.svg)
+### Getting an Projects Metadata (GET)
 
-### Current implementation
+Fetches the metadata for a project
 
-So far, the current implementation of Valist looks like this:
+```
+/api/<OrgName>/meta
+```
 
-![Current Implementation](docs/img/current-implementation.png)
+```
+https://app.valist.io/api/valist/meta
+```
 
-### What's next
+### Getting an Organization's Metadata (GET)
+
+Fetches the metadata for an organization
+
+```
+/api/<OrgName>/meta
+```
+
+```
+https://app.valist.io/api/valist/meta
+```
+
+## What's next
 
 * [x] Full-featured Web UI
 
