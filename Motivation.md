@@ -41,3 +41,19 @@ To start, we are providing a simple web frontend and HTTP relay that can be depl
 So far, the current implementation of Valist looks like this:
 
 ![Current Implementation](docs/img/current-implementation.png)
+
+## Setting up a Valist Relay from Source
+
+1. Clone the valist repository ` git clone https://github.com/valist-io/valist.git`
+
+2. Inside the `Relay` folder create a new `.env` containing a `WEB_PROVIDER` for matic:
+
+    ```
+    WEB3_PROVIDER=https://rpc-mumbai.matic.today
+    ```
+
+3. Run `make install`
+
+4. Run `make run`
+
+5. Considering using a tool such as `pm2` for process management and additional infrastructure logging.
