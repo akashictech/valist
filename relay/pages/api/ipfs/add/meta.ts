@@ -1,29 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import Valist, { Web3Providers } from 'valist';
+import { getValist } from '../../../../utils/valist';
 
 export default async function addOrgMetaIPFS(req: NextApiRequest, res: NextApiResponse) {
-  if (process.env.WEB3_PROVIDER && req.method === 'POST') {
-    const valist = new Valist({
-      web3Provider: new Web3Providers.HttpProvider(process.env.WEB3_PROVIDER),
-      metaTx: false,
-    });
-    await valist.connect();
+  if (req.method !== 'POST') return res.status(405).json({ statusCode: 405, message: 'This endpoint only supports POST' });
 
-    const {
-      body: { metaJSON },
-    } = req;
+  const valist = await getValist();
 
-    try {
-      const ipfsResponse = await valist.addJSONtoIPFS(metaJSON);
+  const {
+    body: { metaJSON },
+  } = req;
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({ ipfsResponse });
-    } catch (err) {
-      // If error
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ statusCode: 500, message: err.message });
-    }
-  } else {
-    return res.status(500).json({ statusCode: 500, message: 'This endpoint only supports POST' });
+  try {
+    const ipfsResponse = await valist.addJSONtoIPFS(metaJSON);
+
+    return res.status(200).json({ ipfsResponse });
+  } catch (err) {
+    return res.status(500).json({ statusCode: 500, message: err.message });
   }
 }
