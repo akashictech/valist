@@ -13,7 +13,7 @@ import ValistABI from './abis/Valist.json';
 // node-fetch polyfill
 const fetch = require('node-fetch');
 if (!globalThis.fetch) {
-    globalThis.fetch = fetch;
+  globalThis.fetch = fetch;
 }
 
 export class InvalidNetworkError extends Error {
@@ -36,8 +36,8 @@ const getValistContract = async (web3: Web3, address?: string) => {
   // get network ID and the deployed address
   const networkId: number = await web3.eth.net.getId();
 
-  if (networkId != 80001 ){
-      throw new InvalidNetworkError('Incorrect network ID must be Matic (80001)');
+  if (networkId != 80001) {
+    throw new InvalidNetworkError('Incorrect network ID must be Matic (80001)');
   }
 
   // @ts-ignore
@@ -95,7 +95,7 @@ class Valist {
       this.metaTxEnabled = true;
 
       // setup biconomy instance with public api key
-      this.biconomy = new Biconomy(web3Provider, { apiKey: "qLW9TRUjQ.f77d2f86-c76a-4b9c-b1ee-0453d0ead878", strictMode: true } );
+      this.biconomy = new Biconomy(web3Provider, { apiKey: "qLW9TRUjQ.f77d2f86-c76a-4b9c-b1ee-0453d0ead878", strictMode: true });
 
       this.web3 = new Web3(this.biconomy);
 
@@ -133,12 +133,8 @@ class Valist {
     }
 
     if (waitForMetaTx && this.biconomy) {
-      await new Promise((resolve, reject) => {
-        this.biconomy.onEvent(this.biconomy.READY, () => {
-          this.metaTxReady = true;
-          resolve(true);
-        });
-      });
+      await new Promise(resolve => this.biconomy.onEvent(this.biconomy.READY, resolve));
+      this.metaTxReady = true;
     }
   }
 
@@ -149,7 +145,7 @@ class Valist {
 
       let json: any = {};
 
-      try { json = await this.fetchJSONfromIPFS(org[0]) } catch (e) {}
+      try { json = await this.fetchJSONfromIPFS(org[0]) } catch (e) { }
 
       return { meta: json, repoNames: org[1] };
 
@@ -166,7 +162,7 @@ class Valist {
 
       let json: any = {};
 
-      try { json = await this.fetchJSONfromIPFS(orgMeta) } catch (e) {}
+      try { json = await this.fetchJSONfromIPFS(orgMeta) } catch (e) { }
 
       return json;
 
@@ -206,7 +202,7 @@ class Valist {
 
       let json: any = {};
 
-      try { json = await this.fetchJSONfromIPFS(repo[0]) } catch (e) {}
+      try { json = await this.fetchJSONfromIPFS(repo[0]) } catch (e) { }
 
       return { meta: json, tags: repo[1] };
 
@@ -234,7 +230,7 @@ class Valist {
 
       let json: any = {};
 
-      try { json = await this.fetchJSONfromIPFS(repoMeta) } catch (e) {};
+      try { json = await this.fetchJSONfromIPFS(repoMeta) } catch (e) { };
 
       return json;
 
@@ -296,7 +292,7 @@ class Valist {
 
       for (let i = 0; i < tags.length; i++) {
         const release = await this.valist.methods.getRelease(orgName, repoName, tags[i]).call();
-        releases.push({...release, tag: tags[i]});
+        releases.push({ ...release, tag: tags[i] });
       };
 
       return releases;
@@ -482,7 +478,7 @@ class Valist {
     try {
       const metaFile = await this.addJSONtoIPFS(repoMeta);
       return await this.sendTransaction(this.valist.methods.createRepository(orgName, repoName.toLowerCase().replace(shortnameFilterRegex, ""), metaFile), account);
-    } catch(e) {
+    } catch (e) {
       const msg = `Could not create repository`;
       console.error(msg, e);
       throw e;
