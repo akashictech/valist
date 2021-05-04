@@ -10,7 +10,17 @@ export default async function getReleasesFromRepo(req: NextApiRequest, res: Next
     query: { releaseName },
   } = req;
 
-  const [orgName, repoName] = decodeURIComponent(releaseName.toString().replace('@', '')).split('/');
+    let orgName: string;
+    let repoName: string;
+
+    if (Array.isArray(releaseName) && releaseName.length > 1) {
+      orgName = releaseName[0].toString().replace('@', '');
+      repoName = releaseName[1].toString();
+    } else {
+      [orgName, repoName] = decodeURIComponent(releaseName.toString().replace('@', '')).split('/');
+    }
+
+    console.log('Parsed', orgName, repoName, 'from', releaseName);
 
   if (orgName && repoName) {
     try {
@@ -47,6 +57,9 @@ export default async function getReleasesFromRepo(req: NextApiRequest, res: Next
     } catch (e) {
       console.log('Could not find package in Valist');
     }
+    console.log('Package not Registered on Valist');
+    console.log(`Fetching Package ${releaseName} from https://registry.npmjs.org`);
+    return res.redirect(`https://registry.npmjs.org/${releaseName.toString().replace(',', '/')}`);
   }
   console.log('Package not Registered on Valist');
   console.log(`Fetching Package ${releaseName} from https://registry.npmjs.org`);
