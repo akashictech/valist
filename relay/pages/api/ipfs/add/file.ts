@@ -15,7 +15,9 @@ export default async function addFiletoIPFS(req: NextApiRequest, res: NextApiRes
   const bucketName = process.env.BUCKET_NAME;
   if (!bucketName) throw new Error('Bucket name not set');
 
-  if (req.method !== 'POST') return res.status(405).json({ statusCode: 405, message: 'This endpoint only supports POST' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ statusCode: 405, message: 'This endpoint only supports POST' });
+  }
 
   try {
     const s3 = new aws.S3({

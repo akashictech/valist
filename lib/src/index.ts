@@ -137,7 +137,7 @@ class Valist {
     }
 
     if (waitForMetaTx && this.biconomy) {
-      await new Promise(resolve => this.biconomy.onEvent(this.biconomy.READY, resolve));
+      await new Promise((resolve) => this.biconomy.onEvent(this.biconomy.READY, resolve));
       this.metaTxReady = true;
     }
   }

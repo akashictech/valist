@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getValist } from '../../../../utils/valist';
+import getValist from '../../../../utils/valist';
 
 export default async function addOrgMetaIPFS(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ statusCode: 405, message: 'This endpoint only supports POST' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ statusCode: 405, message: 'This endpoint only supports POST' });
+  }
 
   const valist = await getValist();
 

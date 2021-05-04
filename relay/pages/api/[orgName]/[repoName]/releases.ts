@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getValist } from '../../../../utils/valist';
+import getValist from '../../../../utils/valist';
 
 export default async function getReleasesFromRepo(req: NextApiRequest, res: NextApiResponse) {
   const valist = await getValist();
